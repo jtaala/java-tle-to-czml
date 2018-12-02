@@ -1,6 +1,7 @@
 package com.pelletier;
 
 import cesiumlanguagewriter.*;
+import cesiumlanguagewriter.advanced.CesiumPropertyWriter;
 import com.pelleiter.data.generation.CartesianTimeList;
 import com.pelleiter.data.generation.TleToPositionsGenerator;
 import com.pelletier.czml.util.JulianDateUtil;
@@ -8,9 +9,12 @@ import gov.sandia.phoenix.elements.tle.TLE;
 import gov.sandia.phoenix.propagators.sgp4.WGS84;
 import scala.Some;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class Main {
@@ -75,13 +79,82 @@ public class Main {
 
         CartesianTimeList cartesianTimeList = tleToPositionsGenerator.generateTimeList(startDate, endDate, 300);
         //getting the position writer
-        PositionCesiumWriter positionCesiumWriter = packetCesiumWriter.getPositionWriter();
-        positionCesiumWriter.open(output);
+        PositionCesiumWriter positionCesiumWriter = packetCesiumWriter.openPositionProperty();
         positionCesiumWriter.writeInterpolationAlgorithm(CesiumInterpolationAlgorithm.LAGRANGE);
         positionCesiumWriter.writeInterpolationDegree(5);
         positionCesiumWriter.writeReferenceFrame("INERTIAL");
         positionCesiumWriter.writeCartesian(cartesianTimeList.getTimes(),cartesianTimeList.getPositions());
         positionCesiumWriter.close();
+
+        //WRITE PATH
+        PathCesiumWriter pathCesiumWriter = packetCesiumWriter.openPathProperty();
+//        pathCesiumWriter.open(output);
+
+        //write show, width, and resolution
+        pathCesiumWriter.writeShowProperty(true);
+        pathCesiumWriter.writeWidthProperty(1.0);
+        pathCesiumWriter.writeResolutionProperty(120.0);
+
+        //write material
+        PolylineMaterialCesiumWriter polylineMaterialCesiumWriter = pathCesiumWriter.openMaterialProperty();
+        SolidColorMaterialCesiumWriter solidColorMaterialCesiumWriter = polylineMaterialCesiumWriter.openSolidColorProperty();
+        ColorCesiumWriter colorCesiumWriter =  solidColorMaterialCesiumWriter.openColorProperty();
+        colorCesiumWriter.writeRgba(new Color(213, 255, 0, 255));
+        colorCesiumWriter.close();
+        solidColorMaterialCesiumWriter.close();
+        polylineMaterialCesiumWriter.close();
+
+
+        //write lead times
+        DoubleCesiumWriter leadTimeWriter = pathCesiumWriter.openLeadTimeProperty();
+
+        //just because something returns a writer doesn't mean you will be using it
+        CesiumIntervalListWriter<DoubleCesiumWriter> leadTimeIntervalListWriter = leadTimeWriter.openMultipleIntervals();
+
+
+        //we have start epoch and end epoch
+        final int MINUTES_IN_DAY = 24 * 60;
+        final int orbitalTimeMinutes = tleToPositionsGenerator.getOrbitalTimeMinutes();
+        final int orbitalTimeSeconds = orbitalTimeMinutes * 60;
+
+        int leftOverMinutes = MINUTES_IN_DAY % orbitalTimeMinutes;
+        int numberOfFullOrbits = Math.floorDiv(MINUTES_IN_DAY, orbitalTimeMinutes);
+
+        JulianDate intervalStart = JulianDateUtil.fromDate(startDate);
+        JulianDate intervalEnd = intervalStart.addSeconds(leftOverMinutes);
+
+        for(int i = 0; i < (numberOfFullOrbits + 1); i++){
+            DoubleCesiumWriter doubleCesiumWriter = leadTimeIntervalListWriter.openInterval(intervalStart, intervalEnd);
+            doubleCesiumWriter.writeNumber(Arrays.asList(intervalStart, intervalStart.addSeconds(orbitalTimeSeconds)),Arrays.asList((double) orbitalTimeSeconds, 0.0),0,2);
+            doubleCesiumWriter.close();
+
+
+            intervalStart = intervalEnd;
+            intervalEnd = intervalStart.addSeconds(orbitalTimeMinutes);
+        }
+        leadTimeIntervalListWriter.close();
+        leadTimeWriter.close();
+
+
+        DoubleCesiumWriter trailTimeWriter = pathCesiumWriter.openTrailTimeProperty();
+        CesiumIntervalListWriter<DoubleCesiumWriter> trailTimeIntervalListWriter = trailTimeWriter.openMultipleIntervals();
+
+        intervalStart = JulianDateUtil.fromDate(startDate);
+        intervalEnd = intervalStart.addSeconds(leftOverMinutes);
+
+        for(int i = 0; i < (numberOfFullOrbits + 1); i++){
+            DoubleCesiumWriter doubleCesiumWriter = trailTimeIntervalListWriter.openInterval(intervalStart, intervalEnd);
+            doubleCesiumWriter.writeNumber(Arrays.asList(intervalStart, intervalStart.addSeconds(orbitalTimeSeconds)),Arrays.asList(0.0, (double) orbitalTimeSeconds),0,2);
+            doubleCesiumWriter.close();
+
+
+            intervalStart = intervalEnd;
+            intervalEnd = intervalStart.addSeconds(orbitalTimeMinutes);
+        }
+        trailTimeIntervalListWriter.close();
+        trailTimeWriter.close();
+
+        pathCesiumWriter.close();
 
         packetCesiumWriter.close();
         output.writeEndSequence();

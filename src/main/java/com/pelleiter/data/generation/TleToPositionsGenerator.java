@@ -31,14 +31,13 @@ public class TleToPositionsGenerator {
     }
 
 
-    public double getOrbitalTimeMinutes(){
-      return (24.0 * 60)/Double.parseDouble(this.tle.line2().substring(52,63));
+    public int getOrbitalTimeMinutes(){
+      return (int) Math.round((24.0 * 60)/Double.parseDouble(this.tle.line2().substring(52,63)));
     };
 
 
     public CartesianTimeList generateTimeList(Date startDate, Date endDate, double timeStep){
 
-        System.out.println(tle.meanMotion());
         Option<String> optionalName = this.tle.line0();
         Propagator propagator = new SGP4(this.tle, true);
 
