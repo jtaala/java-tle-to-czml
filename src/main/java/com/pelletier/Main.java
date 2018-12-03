@@ -1,10 +1,12 @@
 package com.pelletier;
 
 import cesiumlanguagewriter.*;
-import cesiumlanguagewriter.advanced.CesiumPropertyWriter;
 import com.pelleiter.data.generation.CartesianTimeList;
-import com.pelleiter.data.generation.TleToPositionsGenerator;
+import com.pelleiter.data.generation.PositionsGenerator;
 import com.pelletier.czml.util.JulianDateUtil;
+import com.pelletier.data.providers.PathInfoProvider;
+import com.pelletier.data.providers.TlePathInfoProvider;
+import com.pelletier.data.providers.TlePositionProvider;
 import gov.sandia.phoenix.elements.tle.TLE;
 import gov.sandia.phoenix.propagators.sgp4.WGS84;
 import scala.Some;
@@ -13,7 +15,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -21,6 +22,7 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception{
+
 
         //generate values for the next 24 hours
         Date startDate = new Date();
@@ -75,9 +77,10 @@ public class Main {
         billboardCesiumWriter.close();
 
         //GENERATE AND WRITE THE POSITION OBJECT OF THE SATELLITE
-        TleToPositionsGenerator tleToPositionsGenerator = new TleToPositionsGenerator(tle);
+        PositionsGenerator positionsGenerator = new PositionsGenerator();
+        positionsGenerator.setPositionProvider(new TlePositionProvider(tle));
 
-        CartesianTimeList cartesianTimeList = tleToPositionsGenerator.generateTimeList(startDate, endDate, 300);
+        CartesianTimeList cartesianTimeList = positionsGenerator.generateTimeList(startDate, endDate, 300);
         //getting the position writer
         PositionCesiumWriter positionCesiumWriter = packetCesiumWriter.openPositionProperty();
         positionCesiumWriter.writeInterpolationAlgorithm(CesiumInterpolationAlgorithm.LAGRANGE);
@@ -114,7 +117,8 @@ public class Main {
 
         //we have start epoch and end epoch
         final int MINUTES_IN_DAY = 24 * 60;
-        final int orbitalTimeMinutes = tleToPositionsGenerator.getOrbitalTimeMinutes();
+        PathInfoProvider pathInfoProvider = new TlePathInfoProvider(tle);
+        final int orbitalTimeMinutes = pathInfoProvider.getOrbitalTimeMinutes();
         final int orbitalTimeSeconds = orbitalTimeMinutes * 60;
 
         int leftOverMinutes = MINUTES_IN_DAY % orbitalTimeMinutes;
