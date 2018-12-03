@@ -1,34 +1,32 @@
 package com.pelleiter.data.generation;
 
-import agi.foundation.compatibility.DateTimeHelper;
-import cesiumlanguagewriter.Cartesian;
-import cesiumlanguagewriter.Cartographic;
-import cesiumlanguagewriter.JulianDate;
+import cesiumlanguagewriter.*;
 import com.pelletier.czml.util.JulianDateUtil;
 import com.pelletier.data.providers.PositionProvider;
-import gov.sandia.phoenix.elements.tle.TLE;
-import gov.sandia.phoenix.geometry.Vector3;
-import gov.sandia.phoenix.propagators.Propagator;
-import gov.sandia.phoenix.propagators.sgp4.SGP4;
-import gov.sandia.phoenix.propagators.sgp4.WGS84;
-import gov.sandia.phoenix.time.JD;
-import gov.sandia.phoenix.time.TimeBuilder;
-import scala.Option;
-import scala.Some;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class PositionsGenerator {
+public class SatellitePositionWriter {
 
-    private PositionProvider positionProvider;
+    public void writeSatellitePositions(PositionProvider positionProvider, PacketCesiumWriter packetCesiumWriter, Date startDate, Date endDate, int timeStep){
+        CartesianTimeList cartesianTimeList = generateTimeList(positionProvider, startDate, endDate, timeStep);
+        //getting the position writer
+        PositionCesiumWriter positionCesiumWriter = packetCesiumWriter.openPositionProperty();
 
-    public PositionsGenerator(){}
+        //I am going to pass the packetCesiumWriter to the SatellitePositionWriter
 
-    public CartesianTimeList generateTimeList(Date startDate, Date endDate, int timeStep){
+        positionCesiumWriter.writeInterpolationAlgorithm(CesiumInterpolationAlgorithm.LAGRANGE);
+        positionCesiumWriter.writeInterpolationDegree(5);
+        positionCesiumWriter.writeReferenceFrame("INERTIAL");
+        positionCesiumWriter.writeCartesian(cartesianTimeList.getTimes(),cartesianTimeList.getPositions());
+        positionCesiumWriter.close();
+    }
+
+
+    private CartesianTimeList generateTimeList(PositionProvider positionProvider, Date startDate, Date endDate, int timeStep){
         CartesianTimeList cartographicTimeList = new CartesianTimeList();
 
         List<JulianDate> positionTimes = new ArrayList<>();
@@ -55,7 +53,4 @@ public class PositionsGenerator {
         return cartographicTimeList;
     }
 
-    public void setPositionProvider(PositionProvider positionProvider) {
-        this.positionProvider = positionProvider;
-    }
 }

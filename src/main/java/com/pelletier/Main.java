@@ -2,7 +2,7 @@ package com.pelletier;
 
 import cesiumlanguagewriter.*;
 import com.pelleiter.data.generation.CartesianTimeList;
-import com.pelleiter.data.generation.PositionsGenerator;
+import com.pelleiter.data.generation.SatellitePositionWriter;
 import com.pelletier.czml.util.JulianDateUtil;
 import com.pelletier.data.providers.PathInfoProvider;
 import com.pelletier.data.providers.TlePathInfoProvider;
@@ -77,17 +77,8 @@ public class Main {
         billboardCesiumWriter.close();
 
         //GENERATE AND WRITE THE POSITION OBJECT OF THE SATELLITE
-        PositionsGenerator positionsGenerator = new PositionsGenerator();
-        positionsGenerator.setPositionProvider(new TlePositionProvider(tle));
-
-        CartesianTimeList cartesianTimeList = positionsGenerator.generateTimeList(startDate, endDate, 300);
-        //getting the position writer
-        PositionCesiumWriter positionCesiumWriter = packetCesiumWriter.openPositionProperty();
-        positionCesiumWriter.writeInterpolationAlgorithm(CesiumInterpolationAlgorithm.LAGRANGE);
-        positionCesiumWriter.writeInterpolationDegree(5);
-        positionCesiumWriter.writeReferenceFrame("INERTIAL");
-        positionCesiumWriter.writeCartesian(cartesianTimeList.getTimes(),cartesianTimeList.getPositions());
-        positionCesiumWriter.close();
+        SatellitePositionWriter satellitePositionWriter = new SatellitePositionWriter();
+        satellitePositionWriter.writeSatellitePositions(new TlePositionProvider(tle), packetCesiumWriter, startDate, endDate, 300);
 
         //WRITE PATH
         PathCesiumWriter pathCesiumWriter = packetCesiumWriter.openPathProperty();
