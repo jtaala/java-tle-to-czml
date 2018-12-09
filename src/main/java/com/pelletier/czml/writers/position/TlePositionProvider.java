@@ -1,4 +1,4 @@
-package com.pelletier.data.providers;
+package com.pelletier.czml.writers.position;
 
 import gov.sandia.phoenix.elements.tle.TLE;
 import gov.sandia.phoenix.propagators.Propagator;

@@ -1,14 +1,13 @@
-package com.pelleiter.data.generation;
+package com.pelletier.czml.writers.path;
 
 import cesiumlanguagewriter.*;
 import com.pelletier.czml.util.JulianDateUtil;
-import com.pelletier.data.providers.PathInfoProvider;
 
 import java.util.Arrays;
 import java.util.Date;
 
 
-public class SatelliteOrbitWriter {
+public class SatellitePathWriter {
 
     public void writeSatelliteOrbit(PathInfoProvider pathInfoProvider, PacketCesiumWriter packetCesiumWriter, Date startDate, Date endDate) {
 

@@ -1,4 +1,4 @@
-package com.pelleiter.data.generation;
+package com.pelletier.czml.data;
 
 import cesiumlanguagewriter.Cartesian;
 import cesiumlanguagewriter.JulianDate;

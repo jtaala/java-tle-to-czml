@@ -1,4 +1,4 @@
-package com.pelletier.data.providers;
+package com.pelletier.czml.writers.path;
 
 import java.awt.*;
 

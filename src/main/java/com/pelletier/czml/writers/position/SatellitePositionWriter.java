@@ -1,8 +1,8 @@
-package com.pelleiter.data.generation;
+package com.pelletier.czml.writers.position;
 
 import cesiumlanguagewriter.*;
+import com.pelletier.czml.data.CartesianTimeList;
 import com.pelletier.czml.util.JulianDateUtil;
-import com.pelletier.data.providers.PositionProvider;
 
 import java.util.ArrayList;
 import java.util.Calendar;

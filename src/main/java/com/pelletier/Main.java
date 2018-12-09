@@ -1,15 +1,17 @@
 package com.pelletier;
 
 import cesiumlanguagewriter.*;
-import com.pelleiter.data.generation.SatelliteOrbitWriter;
-import com.pelleiter.data.generation.SatellitePositionWriter;
+import com.pelletier.czml.writers.path.PathInfoProvider;
+import com.pelletier.czml.writers.path.SatellitePathWriter;
+import com.pelletier.czml.writers.position.SatellitePositionWriter;
 import com.pelletier.czml.util.JulianDateUtil;
-import com.pelletier.data.providers.TlePathInfoProvider;
-import com.pelletier.data.providers.TlePositionProvider;
+import com.pelletier.czml.writers.path.TlePathInfoProvider;
+import com.pelletier.czml.writers.position.TlePositionProvider;
 import gov.sandia.phoenix.elements.tle.TLE;
 import gov.sandia.phoenix.propagators.sgp4.WGS84;
 import scala.Some;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringWriter;
@@ -78,8 +80,15 @@ public class Main {
         satellitePositionWriter.writeSatellitePositions(new TlePositionProvider(tle), packetCesiumWriter, startDate, endDate, 300);
 
         //WRITE PATH
-        SatelliteOrbitWriter satelliteOrbitWriter = new SatelliteOrbitWriter();
-        satelliteOrbitWriter.writeSatelliteOrbit(new TlePathInfoProvider(tle), packetCesiumWriter, startDate, endDate);
+        SatellitePathWriter satelliteOrbitWriter = new SatellitePathWriter();
+        TlePathInfoProvider tlePathInfoProvider = new TlePathInfoProvider();
+        tlePathInfoProvider.setTle(tle);
+        tlePathInfoProvider.setWidthProperty(1.0);
+        tlePathInfoProvider.setResolutionProperty(120.0);
+        tlePathInfoProvider.setColorProperty(Color.GREEN);
+        tlePathInfoProvider.setShowProperty(true);
+
+        satelliteOrbitWriter.writeSatelliteOrbit(tlePathInfoProvider, packetCesiumWriter, startDate, endDate);
 
         packetCesiumWriter.close();
         output.writeEndSequence();
