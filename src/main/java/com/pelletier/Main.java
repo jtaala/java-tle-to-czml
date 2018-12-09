@@ -1,6 +1,11 @@
 package com.pelletier;
 
 import cesiumlanguagewriter.*;
+import com.pelletier.czml.writers.billboard.BillboardWriter;
+import com.pelletier.czml.writers.billboard.DefaultBillboardInfoProvider;
+import com.pelletier.czml.writers.label.DefaultLabelInfoProvider;
+import com.pelletier.czml.writers.label.LabelInfoProvider;
+import com.pelletier.czml.writers.label.LabelWriter;
 import com.pelletier.czml.writers.path.PathInfoProvider;
 import com.pelletier.czml.writers.path.SatellitePathWriter;
 import com.pelletier.czml.writers.position.SatellitePositionWriter;
@@ -52,28 +57,14 @@ public class Main {
         packetCesiumWriter.open(output);
 
         //WRITE LABEL
-        LabelCesiumWriter labelCesiumWriter = packetCesiumWriter.getLabelWriter();
-        labelCesiumWriter.open(output);
-        labelCesiumWriter.writeFontProperty("11pt Lucida Console");
-        labelCesiumWriter.writeHorizontalOriginProperty(CesiumHorizontalOrigin.LEFT);
-        labelCesiumWriter.writeOutlineWidthProperty(2);
-        labelCesiumWriter.writeTextProperty(name);
-        labelCesiumWriter.writeShowProperty(true);
-
-        labelCesiumWriter.writePixelOffsetProperty(15, 0);
-
-        labelCesiumWriter.close();
-
+        LabelWriter labelWriter = new LabelWriter();
+        DefaultLabelInfoProvider defaultLabelInfoProvider = new DefaultLabelInfoProvider();
+        defaultLabelInfoProvider.setTextProperty(name);
+        labelWriter.writeLabel(defaultLabelInfoProvider, packetCesiumWriter);
 
         //WRITE BILLBOARD
-        BillboardCesiumWriter billboardCesiumWriter = packetCesiumWriter.getBillboardWriter();
-        billboardCesiumWriter.open(output);
-
-        FileInputStream fileInputStream = new FileInputStream(new File("satellite-png-40929.png"));
-        billboardCesiumWriter.writeScaleProperty(.15);
-        billboardCesiumWriter.writeImageProperty(CesiumResource.fromStream(fileInputStream, CesiumImageFormat.PNG));
-        billboardCesiumWriter.writeShowProperty(true);
-        billboardCesiumWriter.close();
+        BillboardWriter billboardWriter = new BillboardWriter();
+        billboardWriter.writeBillboard(new DefaultBillboardInfoProvider(), packetCesiumWriter);
 
         //GENERATE AND WRITE THE POSITION OBJECT OF THE SATELLITE
         SatellitePositionWriter satellitePositionWriter = new SatellitePositionWriter();
