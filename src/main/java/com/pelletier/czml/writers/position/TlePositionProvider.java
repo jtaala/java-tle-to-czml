@@ -13,14 +13,44 @@ import java.util.Date;
  *
  * This is not threadsafe.
  */
-public class TlePositionProvider implements PositionProvider {
+public class TlePositionProvider implements PositionInfoProvider {
 
-    private final TLE tle;
-    private final Propagator propagator;
+    private TLE tle;
+    private Propagator propagator;
+    private Date startDate;
+    private Date endDate;
+    private int timeStep;
 
-    public TlePositionProvider(TLE tle){
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setTimeStep(int timeStep) {
+        this.timeStep = timeStep;
+    }
+
+    public void setTle(TLE tle) {
         this.tle = tle;
         propagator = new SGP4(this.tle, true);
+    }
+
+    @Override
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    @Override
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    @Override
+    public int getTimeStep() {
+        return timeStep;
     }
 
     @Override

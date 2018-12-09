@@ -3,6 +3,7 @@ package com.pelletier.czml.writers.path;
 import gov.sandia.phoenix.elements.tle.TLE;
 
 import java.awt.*;
+import java.util.Date;
 
 public class TlePathInfoProvider implements PathInfoProvider {
 
@@ -11,6 +12,7 @@ public class TlePathInfoProvider implements PathInfoProvider {
     private double resolutionProperty;
     private double widthProperty;
     private boolean showProperty;
+    private Date startDate;
 
 
     public void setTle(TLE tle) {
@@ -56,5 +58,14 @@ public class TlePathInfoProvider implements PathInfoProvider {
 
     public void setShowProperty(boolean showProperty) {
         this.showProperty = showProperty;
+    }
+
+    @Override
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 }

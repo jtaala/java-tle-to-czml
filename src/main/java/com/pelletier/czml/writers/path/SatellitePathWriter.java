@@ -4,12 +4,13 @@ import cesiumlanguagewriter.*;
 import com.pelletier.czml.util.JulianDateUtil;
 
 import java.util.Arrays;
-import java.util.Date;
 
 
 public class SatellitePathWriter {
 
-    public void writeSatelliteOrbit(PathInfoProvider pathInfoProvider, PacketCesiumWriter packetCesiumWriter, Date startDate, Date endDate) {
+    private PathInfoProvider pathInfoProvider;
+
+    public void writeSatelliteOrbit(PacketCesiumWriter packetCesiumWriter) {
 
         PathCesiumWriter pathCesiumWriter = packetCesiumWriter.openPathProperty();
 
@@ -43,7 +44,7 @@ public class SatellitePathWriter {
         int leftOverMinutes = MINUTES_IN_DAY % orbitalTimeMinutes;
         int numberOfFullOrbits = Math.floorDiv(MINUTES_IN_DAY, orbitalTimeMinutes);
 
-        JulianDate intervalStart = JulianDateUtil.fromDate(startDate);
+        JulianDate intervalStart = JulianDateUtil.fromDate(this.pathInfoProvider.getStartDate());
         JulianDate intervalEnd = intervalStart.addSeconds(leftOverMinutes * 60);
 
         for(int i = 0; i < (numberOfFullOrbits + 1); i++){
@@ -62,7 +63,7 @@ public class SatellitePathWriter {
         DoubleCesiumWriter trailTimeWriter = pathCesiumWriter.openTrailTimeProperty();
         CesiumIntervalListWriter<DoubleCesiumWriter> trailTimeIntervalListWriter = trailTimeWriter.openMultipleIntervals();
 
-        intervalStart = JulianDateUtil.fromDate(startDate);
+        intervalStart = JulianDateUtil.fromDate(this.pathInfoProvider.getStartDate());
         intervalEnd = intervalStart.addSeconds(leftOverMinutes * 60);
 
         for(int i = 0; i < (numberOfFullOrbits + 1); i++){
@@ -80,5 +81,9 @@ public class SatellitePathWriter {
         pathCesiumWriter.close();
 
 
+    }
+
+    public void setPathInfoProvider(PathInfoProvider pathInfoProvider) {
+        this.pathInfoProvider = pathInfoProvider;
     }
 }
