@@ -16,8 +16,6 @@ public class SatellitePositionWriter {
         //getting the position writer
         PositionCesiumWriter positionCesiumWriter = packetCesiumWriter.openPositionProperty();
 
-        //I am going to pass the packetCesiumWriter to the SatellitePositionWriter
-
         positionCesiumWriter.writeInterpolationAlgorithm(CesiumInterpolationAlgorithm.LAGRANGE);
         positionCesiumWriter.writeInterpolationDegree(5);
         positionCesiumWriter.writeReferenceFrame("INERTIAL");
