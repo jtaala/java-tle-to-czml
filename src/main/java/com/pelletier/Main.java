@@ -2,9 +2,6 @@ package com.pelletier;
 
 import cesiumlanguagewriter.CesiumOutputStream;
 import cesiumlanguagewriter.CesiumStreamWriter;
-import cesiumlanguagewriter.PacketCesiumWriter;
-import cesiumlanguagewriter.TimeInterval;
-import com.pelletier.czml.util.JulianDateUtil;
 import com.pelletier.czml.writers.billboard.BillboardWriter;
 import com.pelletier.czml.writers.billboard.DefaultBillboardInfoProvider;
 import com.pelletier.czml.writers.label.DefaultLabelInfoProvider;
@@ -14,7 +11,6 @@ import com.pelletier.czml.writers.packet.DocumentPacketWriter;
 import com.pelletier.czml.writers.packet.SatellitePacketWriter;
 import com.pelletier.czml.writers.path.SatellitePathWriter;
 import com.pelletier.czml.writers.path.TlePathInfoProvider;
-import com.pelletier.czml.writers.position.PositionInfoProvider;
 import com.pelletier.czml.writers.position.SatellitePositionWriter;
 import com.pelletier.czml.writers.position.TlePositionProvider;
 import gov.sandia.phoenix.elements.tle.TLE;
