@@ -2,6 +2,9 @@ package com.pelletier.czml.writers.billboard;
 
 import cesiumlanguagewriter.CesiumImageFormat;
 import cesiumlanguagewriter.CesiumResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.ResourceUtils;
 
 import java.io.*;
 
@@ -14,10 +17,14 @@ public class DefaultBillboardInfoProvider implements BillboardInfoProvider {
     public DefaultBillboardInfoProvider() {
 
         try{
-            FileInputStream fileInputStream = new FileInputStream("satellite.png");
-            this.imageProperty = CesiumResource.fromStream(fileInputStream, CesiumImageFormat.PNG);
+            ClassLoader classLoader = getClass().getClassLoader();
+            PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
+            //TODO: figure out the right path for this to avoid this hack, Spring Boot puts it in BOOT-INF and it doesn't load the way I would expect
+            Resource[] resources = pathMatchingResourcePatternResolver.getResources("classpath*:images/*.png");
+
+            this.imageProperty = CesiumResource.fromStream(resources[0].getInputStream(), CesiumImageFormat.PNG);
         }catch(Exception e){
-            System.out.println("Unable to find satellite.png. You must set imageProperty on DefaultBillboardInfoProvider if you want your satellite to have an image.");
+            e.printStackTrace();
         }
 
         this.showProperty = true;
