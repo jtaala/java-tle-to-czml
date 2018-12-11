@@ -20,7 +20,7 @@ public class DefaultBillboardInfoProvider implements BillboardInfoProvider {
             ClassLoader classLoader = getClass().getClassLoader();
             PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
             //TODO: figure out the right path for this to avoid this hack, Spring Boot puts it in BOOT-INF and it doesn't load the way I would expect
-            Resource[] resources = pathMatchingResourcePatternResolver.getResources("classpath*:images/*.png");
+            Resource[] resources = pathMatchingResourcePatternResolver.getResources("classpath:images/satellite.png");
 
             this.imageProperty = CesiumResource.fromStream(resources[0].getInputStream(), CesiumImageFormat.PNG);
         }catch(Exception e){
