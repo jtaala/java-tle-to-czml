@@ -78,6 +78,7 @@ public class JavaTleToCzml implements CommandLineRunner {
         int i = 0;
         while(i < tleFileLines.size()){
 
+            String packetId = String.valueOf(i + 1);
             String name = tleFileLines.get(i);
             String tleLine1 = tleFileLines.get(i + 1);
             String tleLine2 = tleFileLines.get(i + 2);
@@ -94,7 +95,11 @@ public class JavaTleToCzml implements CommandLineRunner {
 
             //Configure Billboard Writer
             BillboardWriter billboardWriter = new BillboardWriter();
-            billboardWriter.setBillboardInfoProvider(new DefaultBillboardInfoProvider());
+            DefaultBillboardInfoProvider defaultBillboardInfoProvider = new DefaultBillboardInfoProvider();
+            if(i > 0){
+                defaultBillboardInfoProvider.setImageReferenceString("1#billboard.image");
+            }
+            billboardWriter.setBillboardInfoProvider(defaultBillboardInfoProvider);
 
             //Configure Position Writer
             SatellitePositionWriter satellitePositionWriter = new SatellitePositionWriter();
@@ -119,6 +124,7 @@ public class JavaTleToCzml implements CommandLineRunner {
 
             //Write Satellite Packet
             SatellitePacketWriter satellitePacketWriter = new SatellitePacketWriter();
+            satellitePacketWriter.setId(packetId);
             satellitePacketWriter.setLabelWriter(labelWriter);
             satellitePacketWriter.setBillboardWriter(billboardWriter);
             satellitePacketWriter.setSatellitePositionWriter(satellitePositionWriter);

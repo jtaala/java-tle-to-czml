@@ -10,6 +10,7 @@ import com.pelletier.czml.writers.position.SatellitePositionWriter;
 
 public class SatellitePacketWriter implements PacketWriter {
 
+    private String id;
     private LabelWriter labelWriter;
     private BillboardWriter billboardWriter;
     private SatellitePositionWriter satellitePositionWriter;
@@ -21,6 +22,7 @@ public class SatellitePacketWriter implements PacketWriter {
     public void writePacket(CesiumStreamWriter cesiumStreamWriter, CesiumOutputStream cesiumOutputStream) {
         PacketCesiumWriter packetCesiumWriter = cesiumStreamWriter.openPacket(cesiumOutputStream);
 
+        packetCesiumWriter.writeId(this.id);
 
         if(this.labelWriter != null){
             labelWriter.writeLabel(packetCesiumWriter);
@@ -38,6 +40,10 @@ public class SatellitePacketWriter implements PacketWriter {
         packetCesiumWriter.close();
     }
 
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setLabelWriter(LabelWriter labelWriter) {
         this.labelWriter = labelWriter;

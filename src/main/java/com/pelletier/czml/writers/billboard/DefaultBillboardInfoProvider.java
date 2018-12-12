@@ -8,6 +8,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 public class DefaultBillboardInfoProvider implements BillboardInfoProvider {
 
     private CesiumResource imageProperty;
+    private String imageReferenceString;
     private boolean showProperty;
     private double scaleProperty;
 
@@ -24,6 +25,16 @@ public class DefaultBillboardInfoProvider implements BillboardInfoProvider {
 
         this.showProperty = true;
         this.scaleProperty = .15;
+    }
+
+
+    @Override
+    public String getImageReferenceString() {
+        return imageReferenceString;
+    }
+
+    public void setImageReferenceString(String imageReferenceString) {
+        this.imageReferenceString = imageReferenceString;
     }
 
     public boolean getShowProperty() {
