@@ -2,6 +2,7 @@ package com.pelletier;
 
 import cesiumlanguagewriter.CesiumOutputStream;
 import cesiumlanguagewriter.CesiumStreamWriter;
+import com.pelletier.czml.util.ColorGenerator;
 import com.pelletier.czml.writers.billboard.BillboardWriter;
 import com.pelletier.czml.writers.billboard.DefaultBillboardInfoProvider;
 import com.pelletier.czml.writers.label.DefaultLabelInfoProvider;
@@ -46,6 +47,24 @@ public class JavaTleToCzml implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
+        String[] colors = {
+                "#39add1", // light blue
+                "#3079ab", // dark blue
+                "#c25975", // mauve
+                "#e15258", // red
+                "#f9845b", // orange
+                "#838cc7", // lavender
+                "#7d669e", // purple
+                "#53bbb4", // aqua
+                "#51b46d", // green
+                "#e0ab18", // mustard
+                "#637a91", // dark gray
+                "#f092b0", // pink
+                "#b7c0c7"  // light gray
+        };
+
+
         String fileName = "tles.txt";
 
         if(args.length > 0){
@@ -83,7 +102,7 @@ public class JavaTleToCzml implements CommandLineRunner {
             String tleLine1 = tleFileLines.get(i + 1);
             String tleLine2 = tleFileLines.get(i + 2);
 
-            TLE tle = new TLE(new Some<String>(name), tleLine1, tleLine2, WGS84.getInstance());
+            TLE tle = new TLE(new Some<>(name), tleLine1, tleLine2, WGS84.getInstance());
 
             //CONFIGURE AND WRITE SATELLITE PACKET
 
@@ -117,7 +136,7 @@ public class JavaTleToCzml implements CommandLineRunner {
             tlePathInfoProvider.setStartDate(startDate);
             tlePathInfoProvider.setWidthProperty(1.0);
             tlePathInfoProvider.setResolutionProperty(120.0);
-            tlePathInfoProvider.setColorProperty(Color.GREEN);
+            tlePathInfoProvider.setColorProperty(ColorGenerator.getRandomColor());
             tlePathInfoProvider.setShowProperty(true);
             satelliteOrbitWriter.setPathInfoProvider(tlePathInfoProvider);
 
@@ -143,4 +162,6 @@ public class JavaTleToCzml implements CommandLineRunner {
 
         exit(0);
     }
+
+
 }
