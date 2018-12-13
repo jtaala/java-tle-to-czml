@@ -6,7 +6,7 @@
 
     <groupId>groupId</groupId>
     <artifactId>java-tle-to-czml</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-RELEASE</version>
     <packaging>jar</packaging>
     <parent>
         <groupId>org.springframework.boot</groupId>
