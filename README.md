@@ -1,12 +1,14 @@
-# README #
+# java-tle-to-czml #
 
 ### Description ###
 
-* A library to create CZML for satellites.
+* A library to create CZML for satellites. Can also be used as a java library for other applications or to extend!
 * 1.0
 * Author:
 	Ryan Pelletier
+	
 ![Imgur](https://i.imgur.com/vZLc6qF.png)
+
 ## How To ##
 
 ### Use ###
