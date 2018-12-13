@@ -6,7 +6,7 @@
 * 1.0
 * Author:
 	Ryan Pelletier
-
+![Imgur](https://i.imgur.com/vZLc6qF.png)
 ## How To ##
 
 ### Use ###
