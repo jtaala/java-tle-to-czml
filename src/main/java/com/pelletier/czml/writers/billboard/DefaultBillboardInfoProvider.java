@@ -15,9 +15,8 @@ public class DefaultBillboardInfoProvider implements BillboardInfoProvider {
     public DefaultBillboardInfoProvider() {
 
         try{
-            ClassLoader classLoader = getClass().getClassLoader();
             PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
-            Resource[] resources = pathMatchingResourcePatternResolver.getResources("classpath:images/satellite.png");
+            Resource[] resources = pathMatchingResourcePatternResolver.getResources("classpath:/images/satellite.png");
             this.imageProperty = CesiumResource.fromStream(resources[0].getInputStream(), CesiumImageFormat.PNG);
         }catch(Exception e){
             e.printStackTrace();
