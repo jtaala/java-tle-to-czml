@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,43 +46,6 @@ public class JavaTleToCzml implements CommandLineRunner {
         app.run(args);
     }
 
-
-    @Override
-    public void run(String... args) throws Exception {
-
-        @SuppressWarnings("unused")
-		String[] colors = {
-                "#39add1", // light blue
-                "#3079ab", // dark blue
-                "#c25975", // mauve
-                "#e15258", // red
-                "#f9845b", // orange
-                "#838cc7", // lavender
-                "#7d669e", // purple
-                "#53bbb4", // aqua
-                "#51b46d", // green
-                "#e0ab18", // mustard
-                "#637a91", // dark gray
-                "#f092b0", // pink
-                "#b7c0c7"  // light gray
-        };
-
-
-        String fileName = "tles.txt";
-
-        if(args.length > 0){
-            fileName = args[0];
-        }
-
-        //read file into stream, try-with-resource
-        List<String> tleFileLines = Files.lines(Paths.get(fileName)).collect(Collectors.toList());
-
-        try (PrintWriter out = new PrintWriter("satellites.czml")) {
-            out.println(tle2czml(tleFileLines));
-        }
-
-        exit(0);
-    }
 
     /**
      * Generates CZML from list of strings of TLE lines.
@@ -174,4 +138,46 @@ public class JavaTleToCzml implements CommandLineRunner {
 		
         return stringWriter.toString();
 	}
+    
+    /**
+     * Generates CZML from single string of concatenated TLE lines.
+     * @param tles
+     * @return
+     * @throws Exception
+     */
+    public static String tle2czml(String tles) throws Exception {
+    	
+    	List<String> list = new ArrayList<String>();
+    	
+    	// create list of tleLines
+    	String lines[] = tles.split("(\\\\r|\\\\n)");
+    	
+    	for (int i=0; i<lines.length; i++) {
+    		
+    		// clean up a little (remove any resident quote characters)
+    		String line = lines[i].replace("\"", "");
+    		list.add(line);
+    	}
+    	
+    	return tle2czml(list);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+
+        String fileName = "tles.txt";
+
+        if(args.length > 0){
+            fileName = args[0];
+        }
+
+        //read file into stream, try-with-resource
+        List<String> tleFileLines = Files.lines(Paths.get(fileName)).collect(Collectors.toList());
+
+        try (PrintWriter out = new PrintWriter("satellites.czml")) {
+            out.println(tle2czml(tleFileLines));
+        }
+
+        exit(0);
+    }
 }
