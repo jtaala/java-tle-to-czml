@@ -1,7 +1,20 @@
 package com.pelletier;
 
-import cesiumlanguagewriter.CesiumOutputStream;
-import cesiumlanguagewriter.CesiumStreamWriter;
+import static java.lang.System.exit;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.boot.Banner;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.pelletier.czml.util.ColorGenerator;
 import com.pelletier.czml.writers.billboard.BillboardWriter;
 import com.pelletier.czml.writers.billboard.DefaultBillboardInfoProvider;
@@ -14,24 +27,12 @@ import com.pelletier.czml.writers.path.SatellitePathWriter;
 import com.pelletier.czml.writers.path.TlePathInfoProvider;
 import com.pelletier.czml.writers.position.SatellitePositionWriter;
 import com.pelletier.czml.writers.position.TlePositionProvider;
+
+import cesiumlanguagewriter.CesiumOutputStream;
+import cesiumlanguagewriter.CesiumStreamWriter;
 import gov.sandia.phoenix.elements.tle.TLE;
 import gov.sandia.phoenix.propagators.sgp4.WGS84;
-import org.springframework.boot.Banner;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import scala.Some;
-
-import java.awt.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.lang.System.exit;
 
 @SpringBootApplication
 public class JavaTleToCzml implements CommandLineRunner {
@@ -48,7 +49,8 @@ public class JavaTleToCzml implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        String[] colors = {
+        @SuppressWarnings("unused")
+		String[] colors = {
                 "#39add1", // light blue
                 "#3079ab", // dark blue
                 "#c25975", // mauve
@@ -71,9 +73,24 @@ public class JavaTleToCzml implements CommandLineRunner {
             fileName = args[0];
         }
 
-
-        //read file into stream, try-with-resources
+        //read file into stream, try-with-resource
         List<String> tleFileLines = Files.lines(Paths.get(fileName)).collect(Collectors.toList());
+
+        try (PrintWriter out = new PrintWriter("satellites.czml")) {
+            out.println(tle2czml(tleFileLines));
+        }
+
+        exit(0);
+    }
+
+    /**
+     * Generates CZML from list of strings of TLE lines.
+     * @param tleLines
+     * @return
+     * @throws Exception
+     */
+	public static String tle2czml(List<String> tleLines) throws Exception {
+		
         StringWriter stringWriter = new StringWriter();
 
         CesiumOutputStream cesiumOutputStream = new CesiumOutputStream(stringWriter);
@@ -95,12 +112,12 @@ public class JavaTleToCzml implements CommandLineRunner {
 
 
         int i = 0;
-        while(i < tleFileLines.size()){
+        while(i < tleLines.size()){
 
             String packetId = String.valueOf(i + 1);
-            String name = tleFileLines.get(i);
-            String tleLine1 = tleFileLines.get(i + 1);
-            String tleLine2 = tleFileLines.get(i + 2);
+            String name = tleLines.get(i);
+            String tleLine1 = tleLines.get(i + 1);
+            String tleLine2 = tleLines.get(i + 2);
 
             TLE tle = new TLE(new Some<>(name), tleLine1, tleLine2, WGS84.getInstance());
 
@@ -153,15 +170,8 @@ public class JavaTleToCzml implements CommandLineRunner {
             i += 3;
         }
 
-
         cesiumOutputStream.writeEndSequence();
-
-        try (PrintWriter out = new PrintWriter("satellites.czml")) {
-            out.println(stringWriter.toString());
-        }
-
-        exit(0);
-    }
-
-
+		
+        return stringWriter.toString();
+	}
 }
