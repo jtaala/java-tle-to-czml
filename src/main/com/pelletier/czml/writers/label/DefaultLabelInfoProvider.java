@@ -13,7 +13,7 @@ public class DefaultLabelInfoProvider implements LabelInfoProvider {
     private double pixelOffsetYProperty;
 
     public DefaultLabelInfoProvider(){
-        this.fontProperty = "11pt Lucida Console";
+        this.fontProperty = "14pt sans-serif";
         this.horizontalOriginProperty = CesiumHorizontalOrigin.LEFT;
         this.outlineWidthProperty = 2.0;
         this.textProperty = "Satellite";
