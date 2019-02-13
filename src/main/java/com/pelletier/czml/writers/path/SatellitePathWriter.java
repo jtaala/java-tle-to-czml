@@ -9,8 +9,17 @@ import java.util.Arrays;
 public class SatellitePathWriter {
 
     private PathInfoProvider pathInfoProvider;
+    private int runtimeMinutes = 60 * 24;
 
-    public void writeSatelliteOrbit(PacketCesiumWriter packetCesiumWriter) {
+    public void setPathInfoProvider(PathInfoProvider pathInfoProvider) {
+        this.pathInfoProvider = pathInfoProvider;
+    }
+
+    public void setRuntimeMinutes(int runtimeMinutes) {
+		this.runtimeMinutes = runtimeMinutes;
+	}
+
+	public void writeSatelliteOrbit(PacketCesiumWriter packetCesiumWriter) {
 
         PathCesiumWriter pathCesiumWriter = packetCesiumWriter.openPathProperty();
 
@@ -37,12 +46,11 @@ public class SatellitePathWriter {
 
 
         //we have start epoch and end epoch
-        final int MINUTES_IN_DAY = 24 * 60;
         final int orbitalTimeMinutes = pathInfoProvider.getOrbitalTimeMinutes();
         final int orbitalTimeSeconds = orbitalTimeMinutes * 60;
 
-        int leftOverMinutes = MINUTES_IN_DAY % orbitalTimeMinutes;
-        int numberOfFullOrbits = Math.floorDiv(MINUTES_IN_DAY, orbitalTimeMinutes);
+        int leftOverMinutes = runtimeMinutes % orbitalTimeMinutes;
+        int numberOfFullOrbits = Math.floorDiv(runtimeMinutes, orbitalTimeMinutes);
 
         JulianDate intervalStart = JulianDateUtil.fromDate(this.pathInfoProvider.getStartDate());
         JulianDate intervalEnd = intervalStart.addSeconds(leftOverMinutes * 60);
@@ -71,7 +79,6 @@ public class SatellitePathWriter {
             doubleCesiumWriter.writeNumber(Arrays.asList(intervalStart, intervalStart.addSeconds(orbitalTimeSeconds)),Arrays.asList(0.0, (double) orbitalTimeSeconds),0,2);
             doubleCesiumWriter.close();
 
-
             intervalStart = intervalEnd;
             intervalEnd = intervalStart.addSeconds(orbitalTimeMinutes * 60);
         }
@@ -79,11 +86,5 @@ public class SatellitePathWriter {
         trailTimeWriter.close();
 
         pathCesiumWriter.close();
-
-
-    }
-
-    public void setPathInfoProvider(PathInfoProvider pathInfoProvider) {
-        this.pathInfoProvider = pathInfoProvider;
     }
 }
