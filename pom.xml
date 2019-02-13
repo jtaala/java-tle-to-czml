@@ -27,28 +27,22 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>gov.sandia.phoenix</groupId>
-            <artifactId>astrodynamics</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/astrodynamics-1.0-SNAPSHOT.jar</systemPath>
-        </dependency>
+
 
         <dependency>
-            <groupId>gov.sandia.phoenix</groupId>
-            <artifactId>math</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/math-1.0-SNAPSHOT.jar</systemPath>
+        	<groupId>gov.sandia.phoenix</groupId>
+        	<artifactId>astrodynamics</artifactId>
+        	<version>1.0</version>
         </dependency>
-
         <dependency>
-            <groupId>agi.foundation</groupId>
-            <artifactId>cesiumlanguagewriter</artifactId>
-            <version>2.10.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/cesiumlanguagewriter-2.10.0.jar</systemPath>
+        	<groupId>agi.foundation</groupId>
+        	<artifactId>cesiumlanguagewriter</artifactId>
+        	<version>2.10.0</version>
+        </dependency>
+        <dependency>
+        	<groupId>gov.sandia.phoenix</groupId>
+        	<artifactId>math</artifactId>
+        	<version>1.0</version>
         </dependency>
     </dependencies>
 
