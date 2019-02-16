@@ -11,16 +11,23 @@ public class DefaultBillboardInfoProvider implements BillboardInfoProvider {
     private String imageReferenceString;
     private boolean showProperty;
     private double scaleProperty;
-
+    
     public DefaultBillboardInfoProvider() {
-
-        try{
-            PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
-            Resource[] resources = pathMatchingResourcePatternResolver.getResources("classpath:/images/satellite.png");
-            this.imageProperty = CesiumResource.fromStream(resources[0].getInputStream(), CesiumImageFormat.PNG);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+    	this(false);
+    }
+    
+    public DefaultBillboardInfoProvider(boolean useDefaultSatelliteImageProperty) {
+    	
+		if (useDefaultSatelliteImageProperty) {
+			try {
+				PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
+				Resource[] resources = pathMatchingResourcePatternResolver
+						.getResources("classpath:/images/satellite.png");
+				this.imageProperty = CesiumResource.fromStream(resources[0].getInputStream(), CesiumImageFormat.PNG);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
         this.showProperty = true;
         this.scaleProperty = .15;
